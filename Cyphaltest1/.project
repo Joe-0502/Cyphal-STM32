@@ -29,4 +29,21 @@
 		<nature>org.eclipse.cdt.managedbuilder.core.managedBuildNature</nature>
 		<nature>org.eclipse.cdt.managedbuilder.core.ScannerConfigNature</nature>
 	</natures>
+	<linkedResources>
+		<link>
+			<name>Inc</name>
+			<type>2</type>
+			<location>C:/Users/joe/Desktop/Github/Cyphal_STM32/Cyphaltest1/Core/Inc</location>
+		</link>
+		<link>
+			<name>Src</name>
+			<type>2</type>
+			<location>C:/Users/joe/Desktop/Github/Cyphal_STM32/Cyphaltest1/Core/Src</location>
+		</link>
+		<link>
+			<name>libcanard</name>
+			<type>2</type>
+			<location>C:/Users/joe/Desktop/libcanard-master/libcanard</location>
+		</link>
+	</linkedResources>
 </projectDescription>

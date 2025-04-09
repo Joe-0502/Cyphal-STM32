@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section name="Workbench">
+	<section name="org.eclipse.ui.texteditor.FindReplaceDialog">
+		<item key="selection" value=""/>
+		<item key="wrap" value="true"/>
+		<item key="casesensitive" value="false"/>
+		<item key="wholeword" value="false"/>
+		<item key="incremental" value="false"/>
+		<item key="isRegEx" value="false"/>
+		<list key="findhistory">
+			<item value="NOMINAL "/>
+			<item value="specific_status_code"/>
+			<item value="etadata.port_id"/>
+			<item value="transfer_metadata.port_id"/>
+			<item value="32085 "/>
+			<item value="uavcan_node_Heartbeat_1_0_FIXED_PORT_ID_"/>
+			<item value=" mem_allocat"/>
+			<item value="CanardPriorityNominal"/>
+			<item value="32085"/>
+			<item value="0x1D55"/>
+			<item value="7509"/>
+			<item value="class"/>
+			<item value="1620"/>
+			<item value="60"/>
+			<item value="7D55"/>
+		</list>
+		<list key="replacehistory">
+		</list>
+	</section>
+	<section name="org.eclipse.ui.texteditor.FindReplaceDialog_dialogBounds">
+		<item key="DIALOG_X_ORIGIN" value="1166"/>
+		<item key="DIALOG_Y_ORIGIN" value="363"/>
+		<item key="DIALOG_WIDTH" value="322"/>
+		<item key="DIALOG_HEIGHT" value="391"/>
+		<item key="DIALOG_FONT_NAME" value="1|Microsoft JhengHei UI|9.0|0|WINDOWS|1|-12|0|0|0|400|0|0|0|1|0|0|0|0|Microsoft JhengHei UI"/>
+	</section>
+</section>
