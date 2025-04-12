@@ -24,6 +24,7 @@
 #include "libcanard/canard.h"
 #include "libcanard/canard.c"
 #include "uavcan/node/Heartbeat_1_0.h"
+#include "uavcan/node/GetInfo_1_0.h"
 #include "uavcan/primitive/array/Real64_1_0.h"
 /* USER CODE END Includes */
 
@@ -34,7 +35,7 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-
+#define GETINFO_TARGET_NODE_ID 42
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -49,6 +50,7 @@ CAN_HandleTypeDef hcan1;
 CanardInstance 	canard;		// This is the core structure that keeps all of the states and allocated resources of the library instance
 CanardTxQueue 	queue;		// Prioritized transmission queue that keeps CAN frames destined for transmission via one CAN interface
 
+static uint8_t getinfo_request_transfer_id = 0;
 static uint8_t my_message_transfer_id = 0;
 CanardPortID const MSG_PORT_ID   = 1620U;
 uint32_t test_uptimeSec = 0;
@@ -56,7 +58,8 @@ uint32_t test_uptimeSec = 0;
 // buffer for serialization of a heartbeat message
 size_t hbeat_ser_buf_size = uavcan_node_Heartbeat_1_0_EXTENT_BYTES_;
 uint8_t hbeat_ser_buf[uavcan_node_Heartbeat_1_0_EXTENT_BYTES_];
-
+uint8_t getinfo_request_ser_buf[1];
+size_t getinfo_request_ser_buf_size = sizeof(getinfo_request_ser_buf);
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -184,7 +187,55 @@ int main(void)
 	                      {
 	                        Error_Handler();
 	                      }
+	      // --- Add: Send GetInfo request ---
+	      // Example: Send a GetInfo request approximately every 5 seconds
+	            if ((test_uptimeSec % 5 == 0) && (test_uptimeSec > 0)) // Avoid sending immediately on startup
+	                {
+	                    // 1. Create GetInfo request object (content is empty)
+	                    uavcan_node_GetInfo_Request_1_0 getinfo_req = {0}; // Initialization to 0 is sufficient
 
+	                    // 2. Serialize the GetInfo request (result size should be 0)
+	                    //    Reset the buffer size variable before calling
+	                    getinfo_request_ser_buf_size = sizeof(getinfo_request_ser_buf);
+	                    int8_t ser_res = uavcan_node_GetInfo_Request_1_0_serialize_(&getinfo_req,
+	                                                                                 getinfo_request_ser_buf,
+	                                                                                 &getinfo_request_ser_buf_size);
+	                    if (ser_res < 0)
+	                    {
+	                        // Serialization error handling
+	                        Error_Handler();
+	                    }
+	                    // At this point, getinfo_request_ser_buf_size should be equal to 0
+
+	                    // 3. Create transfer metadata for the GetInfo request
+	                    const CanardTransferMetadata getinfo_req_metadata = {
+	                        .priority       = CanardPriorityNominal,        // Priority of the request
+	                        .transfer_kind  = CanardTransferKindRequest,    // <<<--- Key: Set as service request
+	                        .port_id        = uavcan_node_GetInfo_1_0_FIXED_PORT_ID_, // Fixed Port ID for GetInfo
+	                        .remote_node_id = GETINFO_TARGET_NODE_ID,       // <<<--- Key: Set the target server node ID
+	                        .transfer_id    = getinfo_request_transfer_id,  // Use the dedicated transfer ID for GetInfo requests
+	                    };
+
+	                    // 4. Push the request into the transmission queue
+	                    //    Note: The payload size passed is the actual size after serialization (0)
+	                    int32_t push_res = canardTxPush(&queue,
+	                                                    &canard,
+	                                                    0, // Transmission deadline (0 means unlimited)
+	                                                    &getinfo_req_metadata,
+	                                                    getinfo_request_ser_buf_size, // <<<--- Pass the actual size after serialization (0)
+	                                                    getinfo_request_ser_buf);     // <<<--- Pass the serialization buffer pointer
+
+	                    if (push_res < 0)
+	                    {
+	                        // Failed to push to queue (e.g., queue is full)
+	                        // You can add error handling logic here, e.g., log the error
+	                    }
+	                    else
+	                    {
+	                        // After successful push, increment the transfer ID for GetInfo requests
+	                        getinfo_request_transfer_id++;
+	                    }
+	                } // --- End GetInfo request ---
 	      // Block for a second before generating the next transfer
 	      uint32_t timestamp = HAL_GetTick();
 	      while( HAL_GetTick() < timestamp + 1000u )
@@ -197,6 +248,7 @@ int main(void)
 	      test_uptimeSec++;
 	      // Increment the transfer_id variable
 	      my_message_transfer_id++;
+
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
