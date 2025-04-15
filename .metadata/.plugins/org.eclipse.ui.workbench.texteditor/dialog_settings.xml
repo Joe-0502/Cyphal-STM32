@@ -8,28 +8,29 @@
 		<item key="incremental" value="false"/>
 		<item key="isRegEx" value="false"/>
 		<list key="findhistory">
-			<item value="NOMINAL "/>
-			<item value="specific_status_code"/>
-			<item value="etadata.port_id"/>
-			<item value="transfer_metadata.port_id"/>
-			<item value="32085 "/>
-			<item value="uavcan_node_Heartbeat_1_0_FIXED_PORT_ID_"/>
-			<item value=" mem_allocat"/>
+			<item value="memcpy "/>
+			<item value=" error &quot;You must either define NUNAV"/>
 			<item value="CanardPriorityNominal"/>
-			<item value="32085"/>
-			<item value="0x1D55"/>
-			<item value="7509"/>
-			<item value="class"/>
-			<item value="1620"/>
-			<item value="60"/>
-			<item value="7D55"/>
+			<item value="uavcan_node_GetInfo_1_0_FIXED_PORT_ID_"/>
+			<item value="_version"/>
+			<item value="version"/>
+			<item value="uavcan_node_Version_1_0 hardware"/>
+			<item value="request"/>
+			<item value="uavcan_node_GetInfo_Request_1_0_SERIALIZATION_BUFFER_SIZE_BYTES_"/>
+			<item value="96"/>
+			<item value="ID"/>
+			<item value="Heartbeat"/>
+			<item value="heartbeat"/>
+			<item value="protocol"/>
+			<item value="protocal"/>
 		</list>
 		<list key="replacehistory">
+			<item value=""/>
 		</list>
 	</section>
 	<section name="org.eclipse.ui.texteditor.FindReplaceDialog_dialogBounds">
-		<item key="DIALOG_X_ORIGIN" value="1166"/>
-		<item key="DIALOG_Y_ORIGIN" value="363"/>
+		<item key="DIALOG_X_ORIGIN" value="8"/>
+		<item key="DIALOG_Y_ORIGIN" value="440"/>
 		<item key="DIALOG_WIDTH" value="322"/>
 		<item key="DIALOG_HEIGHT" value="391"/>
 		<item key="DIALOG_FONT_NAME" value="1|Microsoft JhengHei UI|9.0|0|WINDOWS|1|-12|0|0|0|400|0|0|0|1|0|0|0|0|Microsoft JhengHei UI"/>
