@@ -39,13 +39,13 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   CONTENTS, READONLY, DEBUGGING, OCTETS
  17 .debug_line   00009dce  00000000  00000000  00036cf7  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 18 .debug_str    000c114d  00000000  00000000  00040ac5  2**0
+ 18 .debug_str    000c114c  00000000  00000000  00040ac5  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 19 .comment      00000043  00000000  00000000  00101c12  2**0
+ 19 .comment      00000043  00000000  00000000  00101c11  2**0
                   CONTENTS, READONLY
- 20 .debug_frame  00002ef0  00000000  00000000  00101c58  2**2
+ 20 .debug_frame  00002ef0  00000000  00000000  00101c54  2**2
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 21 .debug_line_str 00000063  00000000  00000000  00104b48  2**0
+ 21 .debug_line_str 00000063  00000000  00000000  00104b44  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
 
 Disassembly of section .text:
@@ -7587,9 +7587,9 @@ int main(void)
  8003548:	c40f      	stmia	r4!, {r0, r1, r2, r3}
  800354a:	e895 0007 	ldmia.w	r5, {r0, r1, r2}
  800354e:	e884 0007 	stmia.w	r4, {r0, r1, r2}
-    canard.node_id = 96;
+    canard.node_id = 1;
  8003552:	4b7f      	ldr	r3, [pc, #508]	@ (8003750 <main+0x290>)
- 8003554:	2260      	movs	r2, #96	@ 0x60
+ 8003554:	2201      	movs	r2, #1
  8003556:	711a      	strb	r2, [r3, #4]
 
     queue = canardTxInit(	100,                 		// Limit the size of the queue at 100 frames.
@@ -7788,7 +7788,7 @@ int main(void)
  80036ba:	805a      	strh	r2, [r3, #2]
  80036bc:	f507 7328 	add.w	r3, r7, #672	@ 0x2a0
  80036c0:	f5a3 731f 	sub.w	r3, r3, #636	@ 0x27c
- 80036c4:	222a      	movs	r2, #42	@ 0x2a
+ 80036c4:	2205      	movs	r2, #5
  80036c6:	711a      	strb	r2, [r3, #4]
  80036c8:	4b2d      	ldr	r3, [pc, #180]	@ (8003780 <main+0x2c0>)
  80036ca:	781a      	ldrb	r2, [r3, #0]

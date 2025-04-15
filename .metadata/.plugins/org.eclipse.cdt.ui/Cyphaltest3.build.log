@@ -1,4 +1,4 @@
-20:47:17 **** Incremental Build of configuration Debug for project Cyphaltest3 ****
+18:31:49 **** Incremental Build of configuration Debug for project Cyphaltest3 ****
 make -j16 all 
 arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32L432xx -c -I../Core/Inc -I../Drivers/STM32L4xx_HAL_Driver/Inc -I../Drivers/STM32L4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32L4xx/Include -I../Drivers/CMSIS/Include -I"C:/Users/joe/Desktop/Github/Cyphal_STM32/Cyphaltest3" -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/main.o"
 ../Core/Src/main.c:388: warning: ignoring '#pragma optimize ' [-Wunknown-pragmas]
@@ -19,5 +19,5 @@ Finished building: default.size.stdout
 Finished building: Cyphaltest3.list
  
 
-20:47:19 Build Finished. 0 errors, 2 warnings. (took 2s.558ms)
+18:31:53 Build Finished. 0 errors, 2 warnings. (took 3s.831ms)
 

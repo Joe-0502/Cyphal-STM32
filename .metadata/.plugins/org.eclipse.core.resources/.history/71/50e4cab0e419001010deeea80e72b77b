@@ -138,7 +138,7 @@ int main(void)
 
     // Initialization of a canard instance with the previous allocator
     canard = canardInit(&memAllocate, &memFree);
-    canard.node_id = 1;
+    canard.node_id = 96;
 
     queue = canardTxInit(	100,                 		// Limit the size of the queue at 100 frames.
                           CANARD_MTU_CAN_CLASSIC);
