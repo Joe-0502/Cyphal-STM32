@@ -1,13 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <section name="Workbench">
 	<section name="org.eclipse.ui.texteditor.FindReplaceDialog">
-		<item key="selection" value=""/>
+		<item key="selection" value="canardRxSubscribe"/>
 		<item key="wrap" value="true"/>
 		<item key="casesensitive" value="false"/>
 		<item key="wholeword" value="false"/>
 		<item key="incremental" value="false"/>
 		<item key="isRegEx" value="false"/>
 		<list key="findhistory">
+			<item value="canardRxSubscribe"/>
+			<item value="canardRxSubscribe(&amp;"/>
+			<item value="cription heartbeat_subscription;"/>
+			<item value=" CanardTxQueueItem*"/>
+			<item value="&amp;memAllocate, &amp;memFree);"/>
+			<item value="HAL_CAN_RxFifo0MsgPendingCallback"/>
 			<item value="memcpy "/>
 			<item value=" error &quot;You must either define NUNAV"/>
 			<item value="CanardPriorityNominal"/>
@@ -17,12 +23,6 @@
 			<item value="uavcan_node_Version_1_0 hardware"/>
 			<item value="request"/>
 			<item value="uavcan_node_GetInfo_Request_1_0_SERIALIZATION_BUFFER_SIZE_BYTES_"/>
-			<item value="96"/>
-			<item value="ID"/>
-			<item value="Heartbeat"/>
-			<item value="heartbeat"/>
-			<item value="protocol"/>
-			<item value="protocal"/>
 		</list>
 		<list key="replacehistory">
 			<item value=""/>

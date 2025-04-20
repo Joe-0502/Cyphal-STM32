@@ -18,6 +18,7 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include <stdlib.h>
@@ -137,7 +138,7 @@ int main(void)
 
     // Initialization of a canard instance with the previous allocator
     canard = canardInit(&memAllocate, &memFree);
-    canard.node_id = 1;
+    canard.node_id = 5;
 
     queue = canardTxInit(	100,                 		// Limit the size of the queue at 100 frames.
                           CANARD_MTU_CAN_CLASSIC);
@@ -315,7 +316,7 @@ static void MX_CAN1_Init(void)
 
   /* USER CODE END CAN1_Init 1 */
   hcan1.Instance = CAN1;
-  hcan1.Init.Prescaler = 10;
+  hcan1.Init.Prescaler = 1;
   hcan1.Init.Mode = CAN_MODE_NORMAL;
   hcan1.Init.SyncJumpWidth = CAN_SJW_1TQ;
   hcan1.Init.TimeSeg1 = CAN_BS1_13TQ;

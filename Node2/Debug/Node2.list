@@ -2064,9 +2064,9 @@ int main(void)
  8001040:	c40f      	stmia	r4!, {r0, r1, r2, r3}
  8001042:	e895 0007 	ldmia.w	r5, {r0, r1, r2}
  8001046:	e884 0007 	stmia.w	r4, {r0, r1, r2}
-    canard.node_id = 1;
+    canard.node_id = 5;
  800104a:	4b7f      	ldr	r3, [pc, #508]	@ (8001248 <main+0x290>)
- 800104c:	2201      	movs	r2, #1
+ 800104c:	2205      	movs	r2, #5
  800104e:	711a      	strb	r2, [r3, #4]
 
     queue = canardTxInit(	100,                 		// Limit the size of the queue at 100 frames.
@@ -2490,9 +2490,9 @@ static void MX_CAN1_Init(void)
  800130c:	4b17      	ldr	r3, [pc, #92]	@ (800136c <MX_CAN1_Init+0x64>)
  800130e:	4a18      	ldr	r2, [pc, #96]	@ (8001370 <MX_CAN1_Init+0x68>)
  8001310:	601a      	str	r2, [r3, #0]
-  hcan1.Init.Prescaler = 10;
+  hcan1.Init.Prescaler = 1;
  8001312:	4b16      	ldr	r3, [pc, #88]	@ (800136c <MX_CAN1_Init+0x64>)
- 8001314:	220a      	movs	r2, #10
+ 8001314:	2201      	movs	r2, #1
  8001316:	605a      	str	r2, [r3, #4]
   hcan1.Init.Mode = CAN_MODE_NORMAL;
  8001318:	4b14      	ldr	r3, [pc, #80]	@ (800136c <MX_CAN1_Init+0x64>)
