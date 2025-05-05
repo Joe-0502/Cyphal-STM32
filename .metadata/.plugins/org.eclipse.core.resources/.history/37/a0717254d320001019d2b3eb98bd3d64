@@ -1,0 +1,603 @@
+/* USER CODE BEGIN Header */
+// ... (header remains the same)
+/* USER CODE END Header */
+/* Includes ------------------------------------------------------------------*/
+#include "main.h"
+
+/* Private includes ----------------------------------------------------------*/
+/* USER CODE BEGIN Includes */
+#include <stdlib.h>
+#include <string.h> // <<<--- 加入 string.h 以便使用 memcpy 和 strlen
+#include "libcanard/canard.h"
+#include "uavcan/node/Heartbeat_1_0.h"
+#include "uavcan/node/GetInfo_1_0.h"
+#include "uavcan/primitive/array/Real64_1_0.h"
+#include "uavcan/node/Version_1_0.h" // <<<--- 加入 Version DSDL
+/* USER CODE END Includes */
+
+/* Private typedef -----------------------------------------------------------*/
+/* USER CODE BEGIN PTD */
+
+/* USER CODE END PTD */
+
+/* Private define ------------------------------------------------------------*/
+/* USER CODE BEGIN PD */
+#define GETINFO_TARGET_NODE_ID 1 // <<<--- 修改為向 Node ID 1 發送請求 (假設 node 1 是另一個節點)
+#define APP_NODE_ID            5 // <<<--- 這個節點本身的 ID
+#define APP_NODE_NAME          "org.cyphal.stm32.node5" // <<<--- 定義節點名稱
+/* USER CODE END PD */
+
+/* Private macro -------------------------------------------------------------*/
+/* USER CODE BEGIN PM */
+
+/* USER CODE END PM */
+
+/* Private variables ---------------------------------------------------------*/
+CAN_HandleTypeDef hcan1;
+
+/* USER CODE BEGIN PV */
+CanardInstance 	canard;		// This is the core structure that keeps all of the states and allocated resources of the library instance
+CanardTxQueue 	queue;		// Prioritized transmission queue that keeps CAN frames destined for transmission via one CAN interface
+
+static uint8_t getinfo_request_transfer_id = 0; // Used for *sending* GetInfo requests
+static uint8_t my_message_transfer_id = 0;      // Used for Heartbeat messages
+CanardPortID const MSG_PORT_ID   = 1620U;       // Port ID for Real64 message example
+uint32_t test_uptimeSec = 0;
+
+// buffer for serialization of a heartbeat message
+uint8_t hbeat_ser_buf[uavcan_node_Heartbeat_1_0_EXTENT_BYTES_];
+size_t hbeat_ser_buf_size = sizeof(hbeat_ser_buf);
+
+// buffer for serialization of a GetInfo request message (empty payload)
+uint8_t getinfo_request_ser_buf[1]; // Minimal buffer for empty request
+size_t getinfo_request_ser_buf_size = 1;
+
+// buffer for serialization of a GetInfo response message
+uint8_t getinfo_response_ser_buf[uavcan_node_GetInfo_Response_1_0_EXTENT_BYTES_];
+size_t getinfo_response_ser_buf_size = sizeof(getinfo_response_ser_buf);
+
+// Subscription states
+CanardRxSubscription heartbeat_subscription;     // Unused in this example, but good practice
+CanardRxSubscription getinfo_request_subscription; // <<<--- 用於接收 GetInfo 請求
+CanardRxSubscription real64_message_subscription; // <<<--- 用於接收 Real64 訊息
+/* USER CODE END PV */
+
+/* Private function prototypes -----------------------------------------------*/
+void SystemClock_Config(void);
+static void MX_GPIO_Init(void);
+static void MX_CAN1_Init(void);
+/* USER CODE BEGIN PFP */
+// Wrappers for using o1heap allocator with libcanard
+static void* memAllocate(CanardInstance* const ins, const size_t amount);
+static void memFree(CanardInstance* const ins, void* const pointer);
+
+// Application-specific function prototypes
+void process_canard_TX_queue(void);
+void handle_GetInfo_request(CanardInstance* ins, CanardRxTransfer* transfer); // <<<--- 新增：處理 GetInfo 請求的函數原型
+void process_received_transfer(CanardRxTransfer* transfer); // <<<--- 新增：分派處理接收到的傳輸
+
+// return useconds - not implemented yet
+uint64_t micros_64(void) // <<<--- 使用 64 位元時間戳以符合 canardRxAccept 的要求
+{
+  // 簡易實現：使用 HAL_GetTick()，並乘以 1000 轉換為微秒
+  // 注意：這會在大約 71 分鐘後溢出 32 位元，但在 64 位元下非常安全
+  // 對於需要精確微秒的應用，需要使用硬體計時器
+  return ((uint64_t)HAL_GetTick()) * 1000ULL;
+}
+/* USER CODE END PFP */
+
+/* Private user code ---------------------------------------------------------*/
+/* USER CODE BEGIN 0 */
+// Function to read the MCU's unique ID (example for STM32)
+void read_unique_id(uint8_t* out_uid_16_bytes) {
+    // STM32 unique ID registers are typically at 0x1FFF7590 (example for some families)
+    // Check your specific STM32 reference manual for the correct address
+    #define STM32_UUID ((uint32_t *)0x1FFF7590) // Example address, verify for your MCU!
+    if (out_uid_16_bytes != NULL) {
+        uint32_t uid[3];
+        uid[0] = HAL_GetUIDw0(); // Use HAL functions if available
+        uid[1] = HAL_GetUIDw1();
+        uid[2] = HAL_GetUIDw2();
+        memcpy(out_uid_16_bytes,      &uid[0], 4);
+        memcpy(out_uid_16_bytes + 4,  &uid[1], 4);
+        memcpy(out_uid_16_bytes + 8,  &uid[2], 4);
+        // The unique ID is often 96 bits (12 bytes). Pad the remaining 4 bytes with 0 or another scheme.
+        memset(out_uid_16_bytes + 12, 0, 4);
+    }
+}
+/* USER CODE END 0 */
+
+/**
+  * @brief  The application entry point.
+  * @retval int
+  */
+int main(void)
+{
+
+  /* USER CODE BEGIN 1 */
+  int8_t result;
+  /* USER CODE END 1 */
+
+  /* MCU Configuration--------------------------------------------------------*/
+
+  /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
+  HAL_Init();
+
+  /* USER CODE BEGIN Init */
+
+  /* USER CODE END Init */
+
+  /* Configure the system clock */
+  SystemClock_Config();
+
+  /* USER CODE BEGIN SysInit */
+
+  /* USER CODE END SysInit */
+
+  /* Initialize all configured peripherals */
+  MX_GPIO_Init();
+  MX_CAN1_Init();
+  /* USER CODE BEGIN 2 */
+  HAL_CAN_Start(&hcan1);
+    HAL_CAN_ActivateNotification(&hcan1, CAN_IT_RX_FIFO0_MSG_PENDING);
+
+    CAN_FilterTypeDef Filter;
+
+    // accept all frames - filtration is managed by software (libcanard handles filtering based on subscriptions)
+    Filter.FilterIdHigh = 0x0000;
+    Filter.FilterIdLow = 0x0000;
+    Filter.FilterMaskIdHigh = 0x0000;
+    Filter.FilterMaskIdLow = 0x0000;
+    Filter.FilterFIFOAssignment = CAN_RX_FIFO0;
+    Filter.FilterBank = 0;
+    Filter.FilterMode = CAN_FILTERMODE_IDMASK;
+    Filter.FilterScale = CAN_FILTERSCALE_32BIT;
+    Filter.FilterActivation = ENABLE;
+    Filter.SlaveStartFilterBank = 0;
+
+    if(HAL_CAN_ConfigFilter(&hcan1, &Filter) != HAL_OK) {
+        Error_Handler();
+    }
+
+    // Initialization of a canard instance
+    canard = canardInit(&memAllocate, &memFree);
+    canard.node_id = APP_NODE_ID; // <<<--- 設定此節點的 ID
+
+    // Initialize the TX queue
+    queue = canardTxInit(	100,                 		// Limit the size of the queue at 100 frames.
+                          CANARD_MTU_CAN_CLASSIC);
+
+    // --- Subscribe to messages and services ---
+
+    // 1. Subscribe to the example Real64 message
+    result = canardRxSubscribe(&canard, // Subscribe to messages
+                              CanardTransferKindMessage,
+                              MSG_PORT_ID, // The port ID of the message
+                              uavcan_primitive_array_Real64_1_0_EXTENT_BYTES_, // Max payload size
+                              CANARD_DEFAULT_TRANSFER_ID_TIMEOUT_USEC,
+                              &real64_message_subscription);
+    if (result < 0) { Error_Handler(); }
+
+    // 2. Subscribe to GetInfo service requests (to act as a server)
+    result = canardRxSubscribe(&canard,
+                              CanardTransferKindRequest, // <<<--- 訂閱服務請求
+                              uavcan_node_GetInfo_1_0_FIXED_PORT_ID_, // <<<--- GetInfo 的固定 Port ID
+                              uavcan_node_GetInfo_Request_1_0_EXTENT_BYTES_, // Request is empty (max size 0)
+                              CANARD_DEFAULT_TRANSFER_ID_TIMEOUT_USEC,
+                              &getinfo_request_subscription); // <<<--- 使用對應的訂閱變數
+     if (result < 0) { Error_Handler(); }
+
+    // 3. (Optional) Subscribe to Heartbeat messages from other nodes (if needed)
+    // result = canardRxSubscribe(&canard, CanardTransferKindMessage, uavcan_node_Heartbeat_1_0_FIXED_PORT_ID_, ...);
+    // ...
+
+  /* USER CODE END 2 */
+
+  /* Infinite loop */
+  /* USER CODE BEGIN WHILE */
+  while (1)
+  {
+	  // --- Send Heartbeat ---
+      hbeat_ser_buf_size = uavcan_node_Heartbeat_1_0_EXTENT_BYTES_; // Reset size before serialization
+      uavcan_node_Heartbeat_1_0 test_heartbeat = {.uptime = test_uptimeSec,
+	                                              .health = {uavcan_node_Health_1_0_NOMINAL},
+	                                              .mode = {uavcan_node_Mode_1_0_OPERATIONAL}};
+	  if (uavcan_node_Heartbeat_1_0_serialize_(&test_heartbeat, hbeat_ser_buf, &hbeat_ser_buf_size) < 0)
+	  {
+	      Error_Handler();
+	  }
+	  const CanardTransferMetadata transfer_metadata = {
+          .priority = CanardPriorityNominal,
+          .transfer_kind = CanardTransferKindMessage,
+          .port_id = uavcan_node_Heartbeat_1_0_FIXED_PORT_ID_,
+          .remote_node_id = CANARD_NODE_ID_UNSET, // Broadcast
+          .transfer_id = my_message_transfer_id,
+      };
+	  canardTxPush(&queue, &canard, 0, &transfer_metadata, hbeat_ser_buf_size, hbeat_ser_buf); // Error check omitted for brevity
+	  my_message_transfer_id++;
+
+	  // --- Send GetInfo request (acting as client) ---
+      // --- Send GetInfo request (acting as client) ---
+      if ((test_uptimeSec % 5 == 0) && (test_uptimeSec > 0) && (GETINFO_TARGET_NODE_ID != CANARD_NODE_ID_UNSET))
+      {
+          // uavcan_node_GetInfo_Request_1_0 getinfo_req = {0}; // <<<--- 刪除此行 (未使用的變數)
+          // No need to serialize an empty request, payload size is 0
+          getinfo_request_ser_buf_size = 0;
+
+          const CanardTransferMetadata getinfo_req_metadata = {
+              .priority       = CanardPriorityNominal,
+              .transfer_kind  = CanardTransferKindRequest,
+              .port_id        = uavcan_node_GetInfo_1_0_FIXED_PORT_ID_,
+              .remote_node_id = GETINFO_TARGET_NODE_ID, // <<<--- 向目標節點發送
+              .transfer_id    = getinfo_request_transfer_id,
+          };
+
+          canardTxPush(&queue, &canard, 0, &getinfo_req_metadata, getinfo_request_ser_buf_size, NULL); // Pass NULL for empty payload
+          getinfo_request_transfer_id++;
+      }
+
+	  // --- Process TX Queue ---
+	  process_canard_TX_queue(); // Send out pending frames
+
+      // --- Process RX (Polling based - alternative to interrupt handling in callback) ---
+      // You could optionally poll for received messages here instead of only relying on the callback
+      // process_canard_RX_queue(); // A hypothetical function to check CAN RX status and call the handler
+
+	  // --- Delay ---
+      uint32_t timestamp = HAL_GetTick();
+      while( HAL_GetTick() < timestamp + 500u ) // Loop for 500ms
+      {
+          // Process TX queue frequently during delay to ensure timely transmission
+          process_canard_TX_queue();
+          // A small delay to yield CPU, especially important if not using RTOS
+          HAL_Delay(1); // Minimal delay
+      }
+
+	  // --- Update counters ---
+	  test_uptimeSec++;
+
+    /* USER CODE END WHILE */
+
+    /* USER CODE BEGIN 3 */
+  }
+  /* USER CODE END 3 */
+}
+
+/**
+  * @brief System Clock Configuration
+  * @retval None
+  */
+void SystemClock_Config(void)
+{
+  // ... (System Clock Config remains the same)
+}
+
+/**
+  * @brief CAN1 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_CAN1_Init(void)
+{
+  // ... (CAN1 Init remains the same)
+}
+
+/**
+  * @brief GPIO Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_GPIO_Init(void)
+{
+  /* GPIO Ports Clock Enable */
+  __HAL_RCC_GPIOA_CLK_ENABLE();
+
+  /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, GPIO_PIN_RESET); // Assuming PA5 is LED
+
+  /*Configure GPIO pin : PA5 */
+  GPIO_InitTypeDef GPIO_InitStruct = {0};
+  GPIO_InitStruct.Pin = GPIO_PIN_5;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+}
+
+/* USER CODE BEGIN 4 */
+
+/**
+ * @brief Processes the transmission queue, sending CAN frames.
+ */
+void process_canard_TX_queue(void)
+{
+  // Look at top of the TX queue of individual CAN frames
+  for (const CanardTxQueueItem* ti = NULL; (ti = canardTxPeek(&queue)) != NULL;)
+  {
+    // Check if the frame is due for transmission (no deadline or deadline not expired)
+    // Note: micros_64() is used here, ensure it provides a valid timestamp.
+    // If micros_64() always returns 0, deadlines won't work correctly.
+    if ((0U == ti->tx_deadline_usec) || (ti->tx_deadline_usec > micros_64()))
+    {
+        // Check if the CAN peripheral is ready to accept a new frame
+        if (HAL_CAN_GetTxMailboxesFreeLevel(&hcan1) > 0)
+        {
+            /* Instantiate a frame for the media layer */
+            CAN_TxHeaderTypeDef TxHeader;
+            TxHeader.IDE = CAN_ID_EXT;
+            TxHeader.RTR = CAN_RTR_DATA;
+            TxHeader.DLC = ti->frame.payload_size;
+            TxHeader.ExtId = ti->frame.extended_can_id;
+            //TxHeader.TransmitGlobalTime = DISABLE; // If using time synchronization features
+
+            uint8_t TxData[8]; // CAN frame payload buffer
+            uint32_t TxMailbox; // To store the mailbox used
+
+            memcpy(TxData, (const uint8_t *)ti->frame.payload, ti->frame.payload_size);
+
+            // Attempt to transmit the frame
+            if (HAL_CAN_AddTxMessage(&hcan1, &TxHeader, TxData, &TxMailbox) == HAL_OK)
+            {
+                // Transmission request accepted by HAL. Pop the frame from the queue.
+                canard.memory_free(&canard, canardTxPop(&queue, ti));
+                // Continue to the next frame in the queue
+                continue; // <<< Important: continue the loop after successful push
+            }
+            else
+            {
+                 // HAL_CAN_AddTxMessage failed (e.g., TX mailboxes full, bus error)
+                 // Handle error appropriately (e.g., log, retry later)
+                 // Break the inner loop for now, will retry in the next call to process_canard_TX_queue
+                 break;
+            }
+        }
+        else
+        {
+            // No free TX mailboxes, need to wait. Break the loop.
+            break;
+        }
+    }
+    else // Deadline expired
+    {
+        // Frame expired, remove it from the queue without sending
+        canard.memory_free(&canard, canardTxPop(&queue, ti));
+        // Continue to check the next frame
+    }
+  } // End of for loop iterating through TX queue
+}
+
+
+/**
+ * @brief Callback function for pending messages in CAN RX FIFO 0.
+ */
+#pragma optimize=s none // You can remove this line
+void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan)
+{
+  if (hcan->Instance == CAN1) // Check if it's the correct CAN interface
+  {
+      CAN_RxHeaderTypeDef RxHeader;
+      uint8_t RxData[8] = {0};
+
+      // Get the received CAN frame
+      if (HAL_CAN_GetRxMessage(hcan, CAN_RX_FIFO0, &RxHeader, RxData) == HAL_OK)
+      {
+          CanardFrame rxf;
+          rxf.extended_can_id = RxHeader.ExtId;
+          rxf.payload_size = (size_t)RxHeader.DLC;
+          rxf.payload = (void*)RxData;
+          // rxf.timestamp_usec = micros_64(); // <<<--- 刪除此行
+
+          CanardRxTransfer transfer; // Stores the assembled transfer payload and metadata
+
+          // <<<--- 修正 canardRxAccept 的參數
+          int8_t result = canardRxAccept(&canard,           // Arg 1: Canard instance pointer
+                                         micros_64(),       // Arg 2: Timestamp
+                                         &rxf,              // Arg 3: Received frame pointer
+                                         0,                 // Arg 4: Redundant interface index
+                                         &transfer,         // Arg 5: Output transfer structure pointer
+                                         NULL);             // Arg 6: Output subscription pointer (NULL if not needed)
+
+          if (result == 1) // 1: Transfer finished, payload is valid.
+          {
+              // A complete transfer has been received, process it
+              process_received_transfer(&transfer);
+              // Free the payload buffer after processing
+              canard.memory_free(&canard, transfer.payload);
+          }
+          else if (result == 0) // 0: Transfer in progress (multi-frame) or unsupported transfer.
+          {
+              // Do nothing, wait for more frames or ignore if unsupported.
+          }
+          else if (result < 0) // Negative: Error (e.g., memory allocation failed).
+          {
+              // Handle error, e.g., log it
+              Error_Handler(); // Or a less drastic error handling
+          }
+      }
+  }
+}
+// You can also remove the #pragma optimize from HAL_CAN_RxFifo1MsgPendingCallback
+/**
+ * @brief Dispatches received transfers to appropriate handlers based on metadata.
+ * @param transfer Pointer to the received transfer object.
+ */
+void process_received_transfer(CanardRxTransfer* transfer)
+{
+    // Check if it's a GetInfo Request for this node
+    if (transfer->metadata.transfer_kind == CanardTransferKindRequest &&
+        transfer->metadata.port_id == uavcan_node_GetInfo_1_0_FIXED_PORT_ID_)
+    {
+        handle_GetInfo_request(&canard, transfer);
+        HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_5); // Toggle LED on GetInfo request
+    }
+    // Check if it's the example Real64 message
+    else if (transfer->metadata.transfer_kind == CanardTransferKindMessage &&
+             transfer->metadata.port_id == MSG_PORT_ID)
+    {
+        uavcan_primitive_array_Real64_1_0 array;
+        // IMPORTANT: Use the actual payload size from the transfer, not the extent.
+        size_t received_payload_size = transfer->payload_size;
+        if (uavcan_primitive_array_Real64_1_0_deserialize_(&array, transfer->payload, &received_payload_size) >= 0)
+        {
+            // Successfully deserialized Real64 message
+            // Process the 'array' data here...
+            // Example: HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_5); // Toggle LED on Real64 message
+        }
+        else
+        {
+            // Deserialization failed
+            // Handle error
+        }
+    }
+    // Add more 'else if' blocks here to handle other expected messages or service responses
+    /*
+    else if (transfer->metadata.transfer_kind == CanardTransferKindResponse &&
+             transfer->metadata.port_id == uavcan_node_GetInfo_1_0_FIXED_PORT_ID_)
+    {
+        // Handle GetInfo RESPONSE (if we were the client sending the request)
+        // uavcan_node_GetInfo_Response_1_0 response;
+        // size_t size = transfer->payload_size;
+        // if(uavcan_node_GetInfo_Response_1_0_deserialize_(&response, transfer->payload, &size) >= 0) { ... }
+    }
+    */
+    else
+    {
+        // Received an unexpected or unhandled transfer type/port ID
+    }
+}
+
+
+/**
+ * @brief Handles an incoming GetInfo request by sending a response.
+ * @param ins Pointer to the Canard instance.
+ * @param transfer Pointer to the received GetInfo request transfer.
+ */
+void handle_GetInfo_request(CanardInstance* ins, CanardRxTransfer* transfer)
+{
+    // 1. Prepare the response data
+    uavcan_node_GetInfo_Response_1_0 response = {0}; // Initialize to zeros
+
+    // 1.1 Protocol Version
+    response.protocol_version.major = CANARD_CYPHAL_SPECIFICATION_VERSION_MAJOR;
+    response.protocol_version.minor = CANARD_CYPHAL_SPECIFICATION_VERSION_MINOR;
+
+    // 1.2 Hardware Version (Example values)
+    response.hardware_version.major = 1;
+    response.hardware_version.minor = 0;
+
+    // 1.3 Software Version (Example values)
+    response.software_version.major = 0;
+    response.software_version.minor = 1;
+    response.software_vcs_revision_id = 0xABCDEF01; // Example VCS revision
+
+    // 1.4 Unique ID (Read from MCU)
+    read_unique_id(response.unique_id);
+
+    // 1.5 Node Name
+    const char* node_name = APP_NODE_NAME;
+    // Ensure the name fits within the response field (adjust size if needed)
+    size_t name_len = strlen(node_name);
+    if (name_len > sizeof(response.name.elements)) {
+        name_len = sizeof(response.name.elements);
+    }
+    memcpy(response.name.elements, node_name, name_len);
+    response.name.count = name_len;
+
+    // 1.6 Optional fields (leave as 0 if not used)
+    // response.software_image_crc.count = 0;
+    // response.certificate_of_authenticity.count = 0;
+
+    // 2. Serialize the response
+    // Reset buffer size before serialization
+    getinfo_response_ser_buf_size = uavcan_node_GetInfo_Response_1_0_EXTENT_BYTES_;
+    int8_t ser_res = uavcan_node_GetInfo_Response_1_0_serialize_(&response,
+                                                                  getinfo_response_ser_buf,
+                                                                  &getinfo_response_ser_buf_size);
+    if (ser_res < 0) {
+        // Serialization failed
+        Error_Handler(); // Or log error
+        return;
+    }
+
+    // 3. Create response transfer metadata
+    const CanardTransferMetadata response_metadata = {
+        .priority       = transfer->metadata.priority, // Match request priority
+        .transfer_kind  = CanardTransferKindResponse, // <<<--- This is a response
+        .port_id        = uavcan_node_GetInfo_1_0_FIXED_PORT_ID_, // Use the same service port ID
+        .remote_node_id = transfer->metadata.remote_node_id, // <<<--- Send back to the requester
+        .transfer_id    = transfer->metadata.transfer_id, // <<<--- MUST match the request's transfer ID
+    };
+
+    // 4. Push the response to the TX queue
+    int32_t push_res = canardTxPush(&queue,
+                                    ins,
+                                    micros_64() + CANARD_DEFAULT_TRANSFER_ID_TIMEOUT_USEC, // Example deadline
+                                    &response_metadata,
+                                    getinfo_response_ser_buf_size, // Actual serialized size
+                                    getinfo_response_ser_buf);
+    if (push_res < 0) {
+        // Failed to push to queue (e.g., queue full)
+        // Handle error (log, etc.)
+    }
+}
+
+
+#pragma optimize=s none // Keep optimization settings if needed
+void HAL_CAN_RxFifo1MsgPendingCallback(CAN_HandleTypeDef *hcan)
+{
+  // This callback is usually for FIFO1, handle if necessary, or leave empty
+  // You might configure certain CAN IDs to go to FIFO1 using filters
+  return ;
+}
+
+// Memory allocator functions (using standard malloc/free)
+static void* memAllocate(CanardInstance* const ins, const size_t amount)
+{
+  (void) ins; // Unused parameter
+  void* ptr = malloc(amount);
+  // Optional: Add error checking for malloc failure
+  // if (ptr == NULL) { // Handle allocation failure }
+  return ptr;
+}
+
+static void memFree(CanardInstance* const ins, void* const pointer)
+{
+  (void) ins; // Unused parameter
+  free(pointer);
+}
+/* USER CODE END 4 */
+
+/**
+  * @brief  This function is executed in case of error occurrence.
+  * @retval None
+  */
+void Error_Handler(void)
+{
+  /* USER CODE BEGIN Error_Handler_Debug */
+  /* User can add his own implementation to report the HAL error return state */
+  __disable_irq();
+   HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, GPIO_PIN_SET); // Turn on LED on error
+  while (1)
+  {
+      // Loop forever
+  }
+  /* USER CODE END Error_Handler_Debug */
+}
+
+#ifdef  USE_FULL_ASSERT
+/**
+  * @brief  Reports the name of the source file and the source line number
+  *         where the assert_param error has occurred.
+  * @param  file: pointer to the source file name
+  * @param  line: assert_param error line source number
+  * @retval None
+  */
+void assert_failed(uint8_t *file, uint32_t line)
+{
+  /* USER CODE BEGIN 6 */
+  /* User can add his own implementation to report the file name and line number,
+     ex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
+     Error_Handler(); // Go to Error_Handler on assertion failure
+  /* USER CODE END 6 */
+}
+#endif /* USE_FULL_ASSERT */

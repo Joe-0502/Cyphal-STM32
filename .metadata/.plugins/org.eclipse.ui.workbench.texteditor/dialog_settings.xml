@@ -1,28 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <section name="Workbench">
 	<section name="org.eclipse.ui.texteditor.FindReplaceDialog">
-		<item key="selection" value="canardRxSubscribe"/>
+		<item key="selection" value="Publish Heartbeat --"/>
 		<item key="wrap" value="true"/>
 		<item key="casesensitive" value="false"/>
 		<item key="wholeword" value="false"/>
 		<item key="incremental" value="false"/>
 		<item key="isRegEx" value="false"/>
 		<list key="findhistory">
+			<item value="Publish Heartbeat --"/>
+			<item value="CanardInstance canardInit"/>
+			<item value="canardTxFree"/>
+			<item value="uavcan_primitive_array_Real64_1_0_EXTENT_BYTES_"/>
+			<item value="1620u"/>
+			<item value="1620 "/>
+			<item value=".primitive.array.Real64."/>
+			<item value="1"/>
+			<item value="response"/>
+			<item value="memset"/>
 			<item value="canardRxSubscribe"/>
 			<item value="canardRxSubscribe(&amp;"/>
 			<item value="cription heartbeat_subscription;"/>
 			<item value=" CanardTxQueueItem*"/>
 			<item value="&amp;memAllocate, &amp;memFree);"/>
-			<item value="HAL_CAN_RxFifo0MsgPendingCallback"/>
-			<item value="memcpy "/>
-			<item value=" error &quot;You must either define NUNAV"/>
-			<item value="CanardPriorityNominal"/>
-			<item value="uavcan_node_GetInfo_1_0_FIXED_PORT_ID_"/>
-			<item value="_version"/>
-			<item value="version"/>
-			<item value="uavcan_node_Version_1_0 hardware"/>
-			<item value="request"/>
-			<item value="uavcan_node_GetInfo_Request_1_0_SERIALIZATION_BUFFER_SIZE_BYTES_"/>
 		</list>
 		<list key="replacehistory">
 			<item value=""/>
@@ -30,7 +30,7 @@
 	</section>
 	<section name="org.eclipse.ui.texteditor.FindReplaceDialog_dialogBounds">
 		<item key="DIALOG_X_ORIGIN" value="8"/>
-		<item key="DIALOG_Y_ORIGIN" value="440"/>
+		<item key="DIALOG_Y_ORIGIN" value="399"/>
 		<item key="DIALOG_WIDTH" value="322"/>
 		<item key="DIALOG_HEIGHT" value="391"/>
 		<item key="DIALOG_FONT_NAME" value="1|Microsoft JhengHei UI|9.0|0|WINDOWS|1|-12|0|0|0|400|0|0|0|1|0|0|0|0|Microsoft JhengHei UI"/>
