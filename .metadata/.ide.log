@@ -1,18 +1,12 @@
-2025-05-02 10:42:34,291 [INFO] WebApp:189 - Connection lost
-2025-05-02 10:42:34,457 [INFO] WebApp:186 - Connection restablished
-2025-05-02 10:42:39,237 [INFO] WebApp:189 - Connection lost
-2025-05-02 10:42:39,336 [INFO] WebApp:186 - Connection restablished
-2025-05-02 11:04:52,642 [INFO] WebApp:189 - Connection lost
-2025-05-02 11:04:52,762 [INFO] WebApp:186 - Connection restablished
-2025-05-02 11:05:09,768 [INFO] WebApp:189 - Connection lost
-2025-05-02 11:05:09,892 [INFO] WebApp:186 - Connection restablished
-2025-05-02 11:05:13,246 [INFO] WebApp:189 - Connection lost
-2025-05-02 11:05:13,346 [INFO] WebApp:186 - Connection restablished
-2025-05-02 12:05:05,896 [INFO] WebApp:189 - Connection lost
-2025-05-02 12:05:06,005 [INFO] WebApp:186 - Connection restablished
-2025-05-02 12:05:46,780 [INFO] WebApp:189 - Connection lost
-2025-05-02 12:05:46,897 [INFO] WebApp:186 - Connection restablished
-2025-05-02 12:05:52,232 [INFO] WebApp:189 - Connection lost
-2025-05-02 12:05:52,343 [INFO] WebApp:186 - Connection restablished
-2025-05-02 13:06:59,678 [INFO] WebApp:189 - Connection lost
-2025-05-02 13:06:59,834 [INFO] WebApp:186 - Connection restablished
+2025-05-11 12:51:12,096 [INFO] WebApp:189 - Connection lost
+2025-05-11 12:51:12,231 [INFO] WebApp:186 - Connection restablished
+2025-05-11 12:51:14,293 [INFO] WebApp:189 - Connection lost
+2025-05-11 12:51:14,442 [INFO] WebApp:186 - Connection restablished
+2025-05-11 12:51:17,567 [INFO] WebApp:189 - Connection lost
+2025-05-11 12:51:17,728 [INFO] WebApp:186 - Connection restablished
+2025-05-11 15:20:00,771 [INFO] WebApp:388 - JxBrowser engine has been closed 
+2025-05-11 15:33:01,122 [INFO] Activator:176 - 
+
+
+2025-05-11 15:33:01,124 [INFO] Activator:177 - !SESSION log4j initialized
+2025-05-11 15:33:08,044 [INFO] LogOutputStream:77 - [STDOUT_REDIRECT] 

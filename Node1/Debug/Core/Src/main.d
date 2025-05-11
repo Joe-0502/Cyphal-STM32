@@ -28,10 +28,7 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
  C:/Users/joe/Desktop/Github/Cyphal_STM32/Node1/uavcan/node/Heartbeat_1_0.h \
  C:/Users/joe/Desktop/Github/Cyphal_STM32/Node1/nunavut/support/serialization.h \
  C:/Users/joe/Desktop/Github/Cyphal_STM32/Node1/uavcan/node/Health_1_0.h \
- C:/Users/joe/Desktop/Github/Cyphal_STM32/Node1/uavcan/node/Mode_1_0.h \
- C:/Users/joe/Desktop/Github/Cyphal_STM32/Node1/uavcan/node/GetInfo_1_0.h \
- C:/Users/joe/Desktop/Github/Cyphal_STM32/Node1/uavcan/node/Version_1_0.h \
- C:/Users/joe/Desktop/Github/Cyphal_STM32/Node1/uavcan/primitive/array/Real64_1_0.h
+ C:/Users/joe/Desktop/Github/Cyphal_STM32/Node1/uavcan/node/Mode_1_0.h
 ../Core/Inc/main.h:
 ../Drivers/STM32L4xx_HAL_Driver/Inc/stm32l4xx_hal.h:
 ../Core/Inc/stm32l4xx_hal_conf.h:
@@ -63,6 +60,3 @@ C:/Users/joe/Desktop/Github/Cyphal_STM32/Node1/uavcan/node/Heartbeat_1_0.h:
 C:/Users/joe/Desktop/Github/Cyphal_STM32/Node1/nunavut/support/serialization.h:
 C:/Users/joe/Desktop/Github/Cyphal_STM32/Node1/uavcan/node/Health_1_0.h:
 C:/Users/joe/Desktop/Github/Cyphal_STM32/Node1/uavcan/node/Mode_1_0.h:
-C:/Users/joe/Desktop/Github/Cyphal_STM32/Node1/uavcan/node/GetInfo_1_0.h:
-C:/Users/joe/Desktop/Github/Cyphal_STM32/Node1/uavcan/node/Version_1_0.h:
-C:/Users/joe/Desktop/Github/Cyphal_STM32/Node1/uavcan/primitive/array/Real64_1_0.h:

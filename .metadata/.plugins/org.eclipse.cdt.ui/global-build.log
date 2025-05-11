@@ -1,35 +1,16 @@
-12:02:08 **** Incremental Build of configuration Debug for project Node2 ****
+13:22:47 **** Incremental Build of configuration Debug for project Node2 ****
 make -j16 all 
 arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32L432xx -c -I../Core/Inc -I../Drivers/STM32L4xx_HAL_Driver/Inc -I../Drivers/STM32L4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32L4xx/Include -I../Drivers/CMSIS/Include -I"C:/Users/joe/Desktop/Github/Cyphal_STM32/Node2" -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/main.o"
-../Core/Src/main.c:574: warning: ignoring '#pragma optimize ' [-Wunknown-pragmas]
-  574 | #pragma optimize=s none // May help debugging ISR issues
+../Core/Src/main.c: In function 'handle_received_transfer':
+../Core/Src/main.c:514:31: warning: statement with no effect [-Wunused-value]
+  514 |         response.name.elements[sizeof(response.name.elements)] ; // Ensure null termination
+      |         ~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+../Core/Src/main.c: At top level:
+../Core/Src/main.c:586: warning: ignoring '#pragma optimize ' [-Wunknown-pragmas]
+  586 | #pragma optimize=s none // ?¯ä»¥ç§»?™¤??–è¨»è§???‰é?™ä?è¡?
       | 
-arm-none-eabi-gcc -o "Node2.elf" @"objects.list"   -mcpu=cortex-m4 -T"C:\Users\joe\Desktop\Github\Cyphal_STM32\Node2\STM32L432KCUX_FLASH.ld" --specs=nosys.specs -Wl,-Map="Node2.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
-Finished building target: Node2.elf
- 
-arm-none-eabi-size  Node2.elf 
-arm-none-eabi-objdump -h -S Node2.elf  > "Node2.list"
-   text	   data	    bss	    dec	    hex	filename
-  34968	    112	   3688	  38768	   9770	Node2.elf
-Finished building: default.size.stdout
- 
-Finished building: Node2.list
- 
-12:02:21 **** Incremental Build of configuration Debug for project Node2 ****
-make -j16 all 
-arm-none-eabi-size  Node2.elf 
-   text	   data	    bss	    dec	    hex	filename
-  34968	    112	   3688	  38768	   9770	Node2.elf
-Finished building: default.size.stdout
- 
-12:04:16 **** Incremental Build of configuration Debug for project Node2 ****
-make -j16 all 
-arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32L432xx -c -I../Core/Inc -I../Drivers/STM32L4xx_HAL_Driver/Inc -I../Drivers/STM32L4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32L4xx/Include -I../Drivers/CMSIS/Include -I"C:/Users/joe/Desktop/Github/Cyphal_STM32/Node2" -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/main.o"
-../Core/Src/main.c:574: warning: ignoring '#pragma optimize ' [-Wunknown-pragmas]
-  574 | #pragma optimize=s none // May help debugging ISR issues
-      | 
-../Core/Src/main.c:56:16: warning: 'getinfo_request_transfer_id' defined but not used [-Wunused-variable]
-   56 | static uint8_t getinfo_request_transfer_id = 0;
+../Core/Src/main.c:61:16: warning: 'getinfo_request_transfer_id' defined but not used [-Wunused-variable]
+   61 | static uint8_t getinfo_request_transfer_id = 0; // For *sending* requests
       |                ^~~~~~~~~~~~~~~~~~~~~~~~~~~
 arm-none-eabi-gcc -o "Node2.elf" @"objects.list"   -mcpu=cortex-m4 -T"C:\Users\joe\Desktop\Github\Cyphal_STM32\Node2\STM32L432KCUX_FLASH.ld" --specs=nosys.specs -Wl,-Map="Node2.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 Finished building target: Node2.elf
@@ -37,19 +18,96 @@ Finished building target: Node2.elf
 arm-none-eabi-size  Node2.elf 
 arm-none-eabi-objdump -h -S Node2.elf  > "Node2.list"
    text	   data	    bss	    dec	    hex	filename
-  34708	    112	   3680	  38500	   9664	Node2.elf
+  38472	    112	   3568	  42152	   a4a8	Node2.elf
 Finished building: default.size.stdout
  
 Finished building: Node2.list
  
-12:07:28 **** Incremental Build of configuration Debug for project Node1 ****
+13:23:04 **** Incremental Build of configuration Debug for project Node2 ****
+make -j16 all 
+arm-none-eabi-size  Node2.elf 
+   text	   data	    bss	    dec	    hex	filename
+  38472	    112	   3568	  42152	   a4a8	Node2.elf
+Finished building: default.size.stdout
+ 
+13:28:20 **** Incremental Build of configuration Debug for project Node2 ****
+make -j16 all 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32L432xx -c -I../Core/Inc -I../Drivers/STM32L4xx_HAL_Driver/Inc -I../Drivers/STM32L4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32L4xx/Include -I../Drivers/CMSIS/Include -I"C:/Users/joe/Desktop/Github/Cyphal_STM32/Node2" -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/main.o"
+../Core/Src/main.c: In function 'handle_received_transfer':
+../Core/Src/main.c:514:31: warning: statement with no effect [-Wunused-value]
+  514 |         response.name.elements[sizeof(response.name.elements)] ; // Ensure null termination
+      |         ~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+../Core/Src/main.c: At top level:
+../Core/Src/main.c:586: warning: ignoring '#pragma optimize ' [-Wunknown-pragmas]
+  586 | #pragma optimize=s none // ?¯ä»¥ç§»?™¤??–è¨»è§???‰é?™ä?è¡?
+      | 
+../Core/Src/main.c:61:16: warning: 'getinfo_request_transfer_id' defined but not used [-Wunused-variable]
+   61 | static uint8_t getinfo_request_transfer_id = 0; // For *sending* requests
+      |                ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+arm-none-eabi-gcc -o "Node2.elf" @"objects.list"   -mcpu=cortex-m4 -T"C:\Users\joe\Desktop\Github\Cyphal_STM32\Node2\STM32L432KCUX_FLASH.ld" --specs=nosys.specs -Wl,-Map="Node2.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: Node2.elf
+ 
+arm-none-eabi-size  Node2.elf 
+arm-none-eabi-objdump -h -S Node2.elf  > "Node2.list"
+   text	   data	    bss	    dec	    hex	filename
+  38400	    112	   3568	  42080	   a460	Node2.elf
+Finished building: default.size.stdout
+ 
+Finished building: Node2.list
+ 
+13:47:14 **** Incremental Build of configuration Debug for project Node2 ****
+make -j16 all 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32L432xx -c -I../Core/Inc -I../Drivers/STM32L4xx_HAL_Driver/Inc -I../Drivers/STM32L4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32L4xx/Include -I../Drivers/CMSIS/Include -I"C:/Users/joe/Desktop/Github/Cyphal_STM32/Node2" -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/main.o"
+../Core/Src/main.c: In function 'handle_received_transfer':
+../Core/Src/main.c:554:31: warning: statement with no effect [-Wunused-value]
+  554 |         response.name.elements[sizeof(response.name.elements)] ; // Ensure null termination
+      |         ~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+../Core/Src/main.c: At top level:
+../Core/Src/main.c:626: warning: ignoring '#pragma optimize ' [-Wunknown-pragmas]
+  626 | #pragma optimize=s none // ?¯ä»¥ç§»?™¤??–è¨»è§???‰é?™ä?è¡?
+      | 
+../Core/Src/main.c:61:16: warning: 'getinfo_request_transfer_id' defined but not used [-Wunused-variable]
+   61 | static uint8_t getinfo_request_transfer_id = 0; // For *sending* requests
+      |                ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+arm-none-eabi-gcc -o "Node2.elf" @"objects.list"   -mcpu=cortex-m4 -T"C:\Users\joe\Desktop\Github\Cyphal_STM32\Node2\STM32L432KCUX_FLASH.ld" --specs=nosys.specs -Wl,-Map="Node2.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: Node2.elf
+ 
+arm-none-eabi-size  Node2.elf 
+arm-none-eabi-objdump -h -S Node2.elf  > "Node2.list"
+   text	   data	    bss	    dec	    hex	filename
+  38616	    112	   3568	  42296	   a538	Node2.elf
+Finished building: default.size.stdout
+ 
+Finished building: Node2.list
+ 
+13:52:30 **** Incremental Build of configuration Debug for project Node2 ****
+make -j16 all 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32L432xx -c -I../Core/Inc -I../Drivers/STM32L4xx_HAL_Driver/Inc -I../Drivers/STM32L4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32L4xx/Include -I../Drivers/CMSIS/Include -I"C:/Users/joe/Desktop/Github/Cyphal_STM32/Node2" -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/main.o"
+../Core/Src/main.c:630: warning: ignoring '#pragma optimize ' [-Wunknown-pragmas]
+  630 | #pragma optimize=s none // ?¯ä»¥ç§»?™¤??–è¨»è§???‰é?™ä?è¡?
+      | 
+../Core/Src/main.c:61:16: warning: 'getinfo_request_transfer_id' defined but not used [-Wunused-variable]
+   61 | static uint8_t getinfo_request_transfer_id = 0; // For *sending* requests
+      |                ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+arm-none-eabi-gcc -o "Node2.elf" @"objects.list"   -mcpu=cortex-m4 -T"C:\Users\joe\Desktop\Github\Cyphal_STM32\Node2\STM32L432KCUX_FLASH.ld" --specs=nosys.specs -Wl,-Map="Node2.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: Node2.elf
+ 
+arm-none-eabi-size  Node2.elf 
+arm-none-eabi-objdump -h -S Node2.elf  > "Node2.list"
+   text	   data	    bss	    dec	    hex	filename
+  38608	    112	   3568	  42288	   a530	Node2.elf
+Finished building: default.size.stdout
+ 
+Finished building: Node2.list
+ 
+13:59:02 **** Incremental Build of configuration Debug for project Node1 ****
 make -j16 all 
 arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32L432xx -c -I../Core/Inc -I../Drivers/STM32L4xx_HAL_Driver/Inc -I../Drivers/STM32L4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32L4xx/Include -I../Drivers/CMSIS/Include -I"C:/Users/joe/Desktop/Github/Cyphal_STM32/Node1" -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/main.o"
-../Core/Src/main.c:388: warning: ignoring '#pragma optimize ' [-Wunknown-pragmas]
-  388 | #pragma optimize=s none
+../Core/Src/main.c:342: warning: ignoring '#pragma optimize ' [-Wunknown-pragmas]
+  342 | #pragma optimize=s none
       | 
-../Core/Src/main.c:429: warning: ignoring '#pragma optimize ' [-Wunknown-pragmas]
-  429 | #pragma optimize=s none
+../Core/Src/main.c:383: warning: ignoring '#pragma optimize ' [-Wunknown-pragmas]
+  383 | #pragma optimize=s none
       | 
 arm-none-eabi-gcc -o "Node1.elf" @"objects.list"   -mcpu=cortex-m4 -T"C:\Users\joe\Desktop\Github\Cyphal_STM32\Node1\STM32L432KCUX_FLASH.ld" --specs=nosys.specs -Wl,-Map="Node1.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 Finished building target: Node1.elf
@@ -57,19 +115,16 @@ Finished building target: Node1.elf
 arm-none-eabi-size  Node1.elf 
 arm-none-eabi-objdump -h -S Node1.elf  > "Node1.list"
    text	   data	    bss	    dec	    hex	filename
-  33932	    112	   2016	  36060	   8cdc	Node1.elf
+  33660	    108	   2012	  35780	   8bc4	Node1.elf
 Finished building: default.size.stdout
  
 Finished building: Node1.list
  
-12:11:47 **** Incremental Build of configuration Debug for project Node1 ****
+14:10:13 **** Incremental Build of configuration Debug for project Node1 ****
 make -j16 all 
 arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32L432xx -c -I../Core/Inc -I../Drivers/STM32L4xx_HAL_Driver/Inc -I../Drivers/STM32L4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32L4xx/Include -I../Drivers/CMSIS/Include -I"C:/Users/joe/Desktop/Github/Cyphal_STM32/Node1" -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/main.o"
-../Core/Src/main.c:388: warning: ignoring '#pragma optimize ' [-Wunknown-pragmas]
-  388 | #pragma optimize=s none
-      | 
-../Core/Src/main.c:429: warning: ignoring '#pragma optimize ' [-Wunknown-pragmas]
-  429 | #pragma optimize=s none
+../Core/Src/main.c:329: warning: ignoring '#pragma optimize ' [-Wunknown-pragmas]
+  329 | #pragma optimize=s none
       | 
 arm-none-eabi-gcc -o "Node1.elf" @"objects.list"   -mcpu=cortex-m4 -T"C:\Users\joe\Desktop\Github\Cyphal_STM32\Node1\STM32L432KCUX_FLASH.ld" --specs=nosys.specs -Wl,-Map="Node1.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 Finished building target: Node1.elf
@@ -77,7 +132,21 @@ Finished building target: Node1.elf
 arm-none-eabi-size  Node1.elf 
 arm-none-eabi-objdump -h -S Node1.elf  > "Node1.list"
    text	   data	    bss	    dec	    hex	filename
-  33932	    112	   2016	  36060	   8cdc	Node1.elf
+  27376	    108	   2012	  29496	   7338	Node1.elf
+Finished building: default.size.stdout
+ 
+Finished building: Node1.list
+ 
+14:17:39 **** Incremental Build of configuration Debug for project Node1 ****
+make -j16 all 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32L432xx -c -I../Core/Inc -I../Drivers/STM32L4xx_HAL_Driver/Inc -I../Drivers/STM32L4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32L4xx/Include -I../Drivers/CMSIS/Include -I"C:/Users/joe/Desktop/Github/Cyphal_STM32/Node1" -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/main.o"
+arm-none-eabi-gcc -o "Node1.elf" @"objects.list"   -mcpu=cortex-m4 -T"C:\Users\joe\Desktop\Github\Cyphal_STM32\Node1\STM32L432KCUX_FLASH.ld" --specs=nosys.specs -Wl,-Map="Node1.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: Node1.elf
+ 
+arm-none-eabi-size  Node1.elf 
+arm-none-eabi-objdump -h -S Node1.elf  > "Node1.list"
+   text	   data	    bss	    dec	    hex	filename
+  27376	    108	   2012	  29496	   7338	Node1.elf
 Finished building: default.size.stdout
  
 Finished building: Node1.list
